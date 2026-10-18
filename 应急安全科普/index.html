@@ -1,0 +1,2603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+		<meta name="theme-color" content="#B74336">
+		<title>应急安全科普游戏</title>
+		<style>
+			:root{
+			  --red:#B74336;       
+			  --red-deep:#8E3028;   
+			  --ink:#2B2D42;       
+			  --muted:#8D99AE;    
+			  --ok:#2A9D8F;        
+			  --bad:#D00000;       
+			  --bg:#F5F1EA;        
+			  --card:#FFFFFF;       
+			  --line:#E5DDD0;     
+			}
+			*{
+				margin:0;
+				padding:0;
+				box-sizing:border-box;
+				-webkit-tap-highlight-color:transparent;
+			}
+			html,body{height:100%}
+			
+			body{
+				font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB","Source Han Sans SC",sans-serif;
+				background:#EFE6DA;
+				color:var(--ink);
+				display:flex;
+				justify-content:center;
+			}
+			#app{
+				width:100%;
+				max-width:430px;
+				min-height:100vh;
+				background:var(--bg);
+				position:relative;
+				overflow:hidden;
+				display:flex;
+				flex-direction:column;
+			}
+			button{
+				font-family:inherit;
+				border:none;
+				cursor:pointer;
+			}
+			.screen{
+				display:none;
+				flex:1;
+				flex-direction:column;
+				padding:20px;
+				animation:fadeUp .35s ease both;
+				overflow-y:auto;
+				-webkit-overflow-scrolling:touch;
+			}
+			.screen.active{
+				display:flex;
+			}
+			@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+			
+			.banner{
+				margin:-20px -20px 0;
+				padding:36px 20px 28px;
+				color:#fff;
+				text-align:center;
+				background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%);
+				border-radius:0 0 30px 30px;
+				position:relative;
+				overflow:hidden;
+			}
+			.banner::after{
+				content:"";
+				position:absolute;
+				inset:0;
+				background:radial-gradient(circle at 85% 15%,rgba(255,255,255,.20) 0,transparent 42%),
+				radial-gradient(circle at 8% 92%,rgba(255,255,255,.14) 0,transparent 38%);
+			}
+			.banner .shield{
+				width:62px;
+				height:62px;
+				margin:0 auto 10px;
+				display:block;
+				position:relative;
+				z-index:1;
+			}
+			.banner .act{
+				font-size:13px;
+				letter-spacing:3px;
+				opacity:.92;
+				position:relative;
+				z-index:1;
+			}
+			.banner h1{
+				font-size:27px;
+				letter-spacing:1px;
+				margin-top:6px;
+				position:relative;
+				z-index:1;
+			}
+			.banner .sub{
+				font-size:14px;
+				opacity:.92;
+				margin-top:8px;
+				position:relative;
+				z-index:1;
+			}
+			
+			.game-list{
+				display:flex;
+				flex-direction:column;
+				gap:14px;margin:18px 0 4px;
+			}
+			.game-card{
+				display:flex;
+				align-items:center;
+				gap:14px;
+				background:var(--card);
+				border:1px solid var(--line);
+				border-radius:18px;
+				padding:16px;
+				text-align:left;
+				box-shadow:0 6px 18px rgba(43,45,66,.05);
+				transition:transform .12s ease;
+			}
+			.game-card:active{transform:scale(.98)}
+			.gc-icon{
+				font-size:32px;
+				flex:none;
+			}
+			.gc-body{
+				flex:1;
+				display:flex;
+				flex-direction:column;
+				gap:3px;
+			}
+			.gc-name{
+				font-size:16.5px;
+				font-weight:700;
+			}
+			.gc-desc{
+				font-size:13px;
+				color:#5A5E76;
+				line-height:1.5;
+			}
+			.gc-best{
+				font-size:12px;
+				color:var(--red);
+				font-weight:600;
+			}
+			.gc-arrow{
+				font-size:22px;
+				color:#C9BBA8;
+				flex:none;
+			}
+			.hotline{
+				display:flex;
+				gap:8px;
+				margin-top:auto;
+				padding-top:18px;
+			}
+			.hotline div{
+				flex:1;
+				background:#fff;
+				border:1px dashed #F3C4C6;
+				border-radius:12px;
+				padding:8px 2px;
+				text-align:center;
+				font-size:12px;
+				color:#7A2E2E;
+			}
+			.hotline b{
+				display:block;
+				font-size:16px;
+				color:var(--bad);
+			}
+			.foot{
+				margin-top:14px;
+				text-align:center;
+				font-size:11px;
+				color:var(--muted);
+				line-height:1.6;
+			}
+			
+			.back-btn{
+				background:none;
+				border:none;
+				font-size:13px;
+				color:#5A5E76;
+				padding:5px 8px 5px 0;
+				flex:none;
+			}
+			.card{
+				background:var(--card);
+				border:1px solid var(--line);
+				border-radius:18px;
+				padding:16px 18px;
+				box-shadow:0 6px 18px rgba(43,45,66,.05);
+			}
+			.btn-primary{
+				
+				width:100%;
+				padding:16px;
+				border-radius:16px;
+				font-size:18px;
+				font-weight:600;
+				color:#fff;
+				background:linear-gradient(135deg,var(--red),var(--red-deep));
+				box-shadow:0 10px 22px rgba(229,56,59,.35);
+				letter-spacing:2px;
+				transition:transform .12s ease;
+			}
+			.btn-primary:active{transform:scale(.97)}
+			.btn-ghost{
+				flex:1;
+				padding:15px;
+				border-radius:16px;
+				font-size:15px;
+				font-weight:600;
+				background:#fff;
+				border:1.5px solid var(--red);
+				color:var(--red);
+			}
+			
+			.topbar{
+				display:flex;
+				justify-content:space-between;
+				align-items:center;
+				font-size:13px;
+				color:#5A5E76;
+				gap:6px;
+			}
+			.topbar .pill{
+				background:#fff;
+				border:1px solid var(--line);
+				border-radius:999px;
+				padding:5px 12px;
+				white-space:nowrap;
+			}
+			.topbar .pill b{color:var(--red)}
+			.progress{
+				height:8px;
+				background:#F3E7DA;
+				border-radius:99px;
+				margin:12px 0 18px;
+				overflow:hidden;
+			}
+			.progress i{
+				display:block;
+				height:100%;
+				width:0;
+				border-radius:99px;
+				background:linear-gradient(90deg,#F77F00,var(--red));
+				transition:width .35s ease;
+			}
+			.q-card{
+				background:var(--card);
+				border:1px solid var(--line);
+				border-radius:20px;
+				padding:20px 18px;
+				box-shadow:0 8px 22px rgba(43,45,66,.06);
+			}
+			.q-tag{
+				display:inline-flex;
+				align-items:center;
+				gap:6px;
+				font-size:12px;
+				font-weight:600;
+				padding:4px 12px;
+				border-radius:999px;
+				margin-bottom:12px;
+			}
+			.q-title{
+				font-size:19px;
+				line-height:1.45;
+				margin-bottom:8px;
+			}
+			.q-desc{
+				font-size:14.5px;
+				line-height:1.7;
+				color:#55597A;
+			}
+			.options{
+				display:flex;
+				flex-direction:column;
+				gap:12px;
+				margin-top:18px;
+				padding-bottom:20px;
+			}
+			.opt{
+				display:flex;
+				align-items:flex-start;
+				gap:12px;
+				width:100%;
+				text-align:left;
+				background:#fff;
+				border:1.5px solid var(--line);
+				border-radius:16px;
+				padding:14px 14px;
+				font-size:15px;
+				line-height:1.55;
+				color:var(--ink);
+				transition:border-color .15s,background .15s;
+			}
+			.opt:active{transform:scale(.985)}
+			.opt-letter{
+				flex:none;
+				width:26px;
+				height:26px;
+				border-radius:8px;
+				background:#F6EFE6;
+				color:#7A6A55;
+				font-size:13px;
+				font-weight:700;
+				display:flex;
+				align-items:center;
+				justify-content:center;
+				margin-top:1px;
+			}
+			.opt.disabled{
+				pointer-events:none;
+			}
+			.opt.right{
+				border-color:var(--ok);
+				background:#EAF7F4;
+			}
+			.opt.right .opt-letter{
+				background:var(--ok);
+				color:#fff;
+			}
+			.opt.wrong{
+				border-color:var(--bad);
+				background:#FCEBEB;
+				animation:shake .3s;
+			}
+			.opt.wrong .opt-letter{
+				background:var(--bad);
+				color:#fff;
+			}
+			@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+			
+			.find-grid{
+				display:grid;
+				grid-template-columns:repeat(3,1fr);
+				gap:10px;
+				margin-top:16px;
+			}
+			.find-item{
+				position:relative;
+				display:flex;
+				flex-direction:column;
+				align-items:center;
+				gap:6px;
+				background:#fff;
+				border:1.5px solid var(--line);
+				border-radius:14px;
+				padding:12px 6px;
+				transition:border-color .15s,background .15s;
+			}
+			.find-item:active{
+				transform:scale(.96);
+			}
+			.fi-icon{
+				font-size:28px;
+				line-height:1;
+			}
+			.fi-name{
+				font-size:11.5px;
+				line-height:1.35;
+				color:#4A4E69;
+				text-align:center;
+			}
+			.find-item.found{
+				border-color:var(--ok);
+				background:#EAF7F4;
+				pointer-events:none;
+			}
+			.find-item.found::after{
+				content:"✓";
+				position:absolute;
+				top:3px;
+				right:7px;
+				color:var(--ok);
+				font-weight:700;
+				font-size:13px;
+			}
+			.find-item.miss{
+				border-color:var(--bad);
+				animation:shake .3s;
+			}
+			
+			.order-steps{
+				display:flex;
+				flex-direction:column;
+				gap:12px;
+				margin-top:16px;
+				padding-bottom:20px;
+			}
+			.step{
+				display:flex;
+				align-items:center;
+				gap:12px;	
+				text-align:left;
+				background:#fff;
+				border:1.5px solid var(--line);
+				border-radius:16px;
+				padding:14px;
+				font-size:15px;
+				line-height:1.5;
+				color:var(--ink);
+			}
+			.step:active{
+				transform:scale(.985);
+			}
+			.step-no{
+				flex:none;
+				width:26px;
+				height:26px;
+				border-radius:50%;
+				background:#F6EFE6;
+				color:#7A6A55;
+				font-size:13px;
+				font-weight:700;
+				display:flex;
+				align-items:center;
+				justify-content:center;
+			}
+			.step.right{
+				border-color:var(--ok);
+				background:#EAF7F4;
+				pointer-events:none;
+			}
+			.step.right .step-no{
+				background:var(--ok);
+				color:#fff;
+			}
+			.step.wrong{
+				border-color:var(--bad);
+				animation:shake .3s;
+			}
+			
+			.sheet{
+				position:absolute;
+				left:0;
+				right:0;
+				bottom:0;
+				z-index:30;
+				background:#fff;
+				border-radius:24px 24px 0 0;
+				padding:22px 20px 26px;
+				box-shadow:0 -10px 34px rgba(43,45,66,.18);
+				transform:translateY(105%);
+				transition:transform .32s cubic-bezier(.2,.8,.3,1);
+			}
+			.sheet.show{
+				transform:none;
+			}
+			.sheet-head{
+				display:flex;
+				align-items:center;
+				gap:8px;
+				font-size:18px;
+				font-weight:700;
+				margin-bottom:10px;
+			}
+			.sheet-explain{
+				font-size:14.5px;
+				line-height:1.75;
+				color:#4A4E69;
+				background:#FAF6F0;
+				border-left:4px solid #F77F00;
+				border-radius:0 12px 12px 0;
+				padding:12px 14px;
+			}
+			.sheet-tip{
+				margin-top:12px;
+				font-size:13px;
+				line-height:1.7;
+				color:#8A5A00;
+				background:#FFF6DE;
+				border-radius:12px;
+				padding:10px 14px;
+			}
+			.sheet .btn-primary{
+				margin-top:16px;
+				padding:14px;
+				font-size:16px;
+			}
+			
+			.result-head{
+				text-align:center;
+				padding-top:10px;
+			}
+			.ring{
+				position:relative;
+				width:150px;
+				height:150px;
+				margin:0 auto 6px;
+			}
+			.ring svg{
+				transform:rotate(-90deg);
+			}
+			.ring .num{
+				position:absolute;
+				inset:0;
+				display:flex;
+				flex-direction:column;
+				align-items:center;
+				
+				justify-content:center;
+			}
+			.ring .num b{
+				font-size:44px;
+				color:var(--red);
+				line-height:1;
+			}
+			.ring .num span{
+				font-size:12px;
+				color:var(--muted);
+				margin-top:4px;
+			}
+			.rank{
+				font-size:24px;
+				font-weight:700;
+				margin:8px 0 6px;
+			}
+			.rank-comment{
+				font-size:14px;
+				color:#5A5E76;
+				line-height:1.7;
+				max-width:300px;
+				margin:0 auto;
+			}
+			.stats{
+				display:flex;
+				gap:10px;
+				margin:20px 0 14px;
+			}
+			.stats div{
+				flex:1;
+				background:#fff;
+				border:1px solid var(--line);
+				border-radius:14px;
+				padding:10px;
+				text-align:center;
+				font-size:12px;
+				color:#5A5E76;
+			}
+			.stats b{
+				display:block;
+				font-size:19px;
+				color:var(--ink);
+				margin-bottom:2px;
+			}
+			.review{
+				max-height:240px;
+				overflow:auto;
+				margin-bottom:6px;
+			}
+			.review h3{
+				font-size:15px;
+				margin-bottom:10px;
+			}
+			.review-item{
+				background:#fff;
+				border:1px solid var(--line);
+				border-radius:14px;
+				padding:12px 14px;
+				margin-bottom:10px;
+			}
+			.review-item .rq{
+				font-size:13px;
+				color:var(--bad);
+				font-weight:600;
+				margin-bottom:4px;
+			}
+			.review-item .ra{
+				font-size:13px;
+				color:#2F6B5F;
+				font-weight:600;
+				margin-bottom:4px;
+			}
+			.review-item .rd{
+				font-size:13px;
+				line-height:1.6;
+				color:#55597A;
+			}
+			.btn-row{
+				display:flex;
+				gap:10px;
+				margin-top:auto;
+				padding-top:18px;
+			}
+			.btn-row .btn-primary{
+				flex:1.2;
+				padding:15px;
+				font-size:16px;
+			}
+			
+			.laser-arena{
+				position:relative;
+				height:440px;
+				margin-top:14px;
+				border-radius:20px;
+				overflow:hidden;
+				background:radial-gradient(circle at 50% 115%,#2E3A5C 0%,#151B2B 68%);
+				box-shadow:inset 0 0 40px rgba(0,0,0,.45);
+				user-select:none;
+				-webkit-user-select:none;
+				touch-action:manipulation;
+			}
+			.laser-arena::before{
+				content:"";
+				position:absolute;
+				inset:0;
+				pointer-events:none;
+				background-image:linear-gradient(rgba(148,178,255,.07) 1px,transparent 1px),
+			                   linear-gradient(90deg,rgba(148,178,255,.07) 1px,transparent 1px);
+				background-size:34px 34px;
+			}
+			.laser-cannon{
+				position:absolute;
+				left:50%;
+				bottom:8px;
+				transform:translateX(-50%);
+				width:46px;
+				height:26px;
+				border-radius:12px 12px 4px 4px;
+				z-index:6;
+				background:linear-gradient(180deg,#FF7B7B,#C9184A);
+				box-shadow:0 0 14px rgba(255,90,110,.55);
+				transition:box-shadow .12s;
+			}
+			.laser-cannon::after{
+				content:"";
+				position:absolute;
+				left:50%;
+				top:-9px;
+				transform:translateX(-50%);
+				border:7px solid transparent;
+				border-bottom-color:#FFA8B4;
+			}
+			.laser-cannon.fire{
+				box-shadow:0 0 28px rgba(255,120,140,.95);
+			}
+			.laser-item{
+				position:absolute;
+				left:0;
+				top:0;
+				display:flex;
+				flex-direction:column;
+				align-items:center;
+				gap:2px;
+				background:none;
+				border:none;
+				padding:2px;
+				cursor:pointer;
+				touch-action:manipulation;
+			}
+			.laser-item .li-icon{
+				font-size:27px;
+				line-height:1;
+				filter:drop-shadow(0 0 7px rgba(160,190,255,.5));
+			}
+			.laser-item .li-name{
+				font-size:10px;
+				color:#D7E1F5;
+				background:rgba(16,22,38,.78);
+				padding:2px 7px;
+				border-radius:999px;
+				white-space:nowrap;
+			}
+			.laser-float{
+				position:absolute;
+				z-index:8;
+				font-size:15px;
+				font-weight:800;
+				pointer-events:none;
+				text-shadow:0 2px 8px rgba(0,0,0,.5);
+				animation:floatUp .85s ease-out forwards;
+			}
+			@keyframes floatUp{from{transform:translate(-50%,-50%);opacity:1}to{transform:translate(-50%,-170%);opacity:0}}
+			#laser-svg{
+				position:absolute;
+				inset:0;
+				width:100%;
+				height:100%;
+				pointer-events:none;
+				z-index:7;
+			}
+			#laser-beam{
+				stroke:#FF5A6E;
+				stroke-width:3.5;
+				stroke-linecap:round;
+				opacity:0;
+				transition:opacity .18s;
+				filter:drop-shadow(0 0 6px #FF8FA0);
+			}
+			.laser-tip{
+				margin-top:12px;
+				font-size:12.5px;
+				color:#8A6A4A;
+				text-align:center;
+				line-height:1.6;
+			}
+			
+			.match-wrap{
+				margin-top:14px;
+				background:#fff;
+				border:1px solid var(--line);
+				border-radius:12px;
+				padding:12px;
+			}
+			.match-board{
+				display:grid;
+				grid-template-columns:repeat(6,minmax(0,1fr));
+				gap:6px;
+				aspect-ratio:1/1;
+				touch-action:manipulation;
+			}
+			.match-cell{
+				position:relative;
+				display:flex;
+				align-items:center;
+				justify-content:center;
+				min-width:0;
+				min-height:0;
+				aspect-ratio:1;
+				padding:0;
+				background:#F7F3EC;
+				border:1px solid #E7DED1;
+				border-radius:8px;
+				transition:background .12s,transform .12s;
+				touch-action:none;
+			}
+			.match-cell:active{
+				transform:scale(.96);
+			}
+			.match-cell.selected{
+				background:#E4F2EF;
+				border-color:#2A9D8F;
+				box-shadow:inset 0 0 0 2px #2A9D8F;
+			}
+			.match-tile{
+				display:flex;
+				flex-direction:column;
+				align-items:center;
+				justify-content:center;
+				gap:1px;
+				width:92%;
+				height:92%;
+				border-radius:7px;
+				font-weight:600;
+			}
+			.tile-drawing{
+				width:26px;
+				height:26px;
+				flex:none;
+			}
+			.tile-label{
+				font-size:9px;
+				white-space:nowrap;
+				line-height:1.3;
+			}
+			.match-cell[data-kind="0"] .match-tile{background:#F7DED0;color:#914022}
+			.match-cell[data-kind="1"] .match-tile{background:#F7DADB;color:#A4383D}
+			.match-cell[data-kind="2"] .match-tile{background:#F5E9BC;color:#846221}
+			.match-cell[data-kind="3"] .match-tile{background:#DAEBE4;color:#35664F}
+			.match-cell[data-kind="4"] .match-tile{background:#E8DEF0;color:#73548A}
+			.match-cell[data-kind="5"] .match-tile{background:#D6E8F2;color:#336D8A}
+			.match-cell.hint{
+				outline:3px dashed #2A7561;
+				outline-offset:-3px;
+			}
+			.match-cell.falling .match-tile{animation:tileDrop .18s ease-out}
+			@keyframes tileDrop{from{transform:translateY(-18px);opacity:.2}to{transform:none;opacity:1}}
+			.match-tools{
+				display:flex;
+				gap:8px;
+				margin-top:12px;
+				align-items:center;
+			}
+			.match-tools button{
+				padding:9px 12px;
+				background:#F2F5EF;
+				color:#35664F;
+				border:1px solid #D8E0D3;
+				border-radius:7px;
+				font-size:12px;
+			}
+			.match-tools button:disabled{
+				opacity:.5;
+				cursor:wait;
+			}
+			.match-tools span{
+				margin-left:auto;
+				font-size:12px;
+				color:#6B6A67;
+			}
+			.match-finish{
+				display:block;
+				width:100%;
+				margin-top:12px;
+				padding:12px;
+				font-size:14px;
+				color:#35664F;
+				background:#fff;
+				border:1px solid #CDD9C7;
+				border-radius:8px;
+			}
+			.match-finish:disabled{
+				opacity:.5;cursor:wait;
+			}
+			.ring.score-only{
+				height:100px;
+				width:100%;
+				margin-top:12px;
+			}
+			.ring.score-only svg{
+				display:none;
+			}
+			.ring.score-only .num b{
+				font-size:56px;
+			}
+			.match-cell.matched .match-tile{
+				animation:tilePop .22s ease-in forwards;
+			}
+			@keyframes tilePop{to{transform:scale(.2);opacity:0}}
+			.match-meta{
+				display:flex;
+				justify-content:space-between;
+				gap:8px;
+				margin-top:10px;
+				font-size:12px;
+				color:#6B6A67;
+			}
+			.match-meta b{
+				color:var(--ink);
+				font-size:15px;
+			}
+			.match-tip{
+				margin-top:10px;
+				padding:10px 12px;
+				background:#F8F3EA;
+				border-left:3px solid #D99B2B;
+				border-radius:0 8px 8px 0;
+				font-size:12.5px;
+				line-height:1.6;
+				color:#6B5A45;
+			}
+			
+			.banner{
+				background:var(--red);
+				border-radius:0 0 14px 14px;
+				padding-top:30px;
+				flex-shrink:0;
+			}
+			.banner::after{
+				display:none;
+			}
+			.banner h1{
+				font-size:25px;
+				letter-spacing:0;
+			}
+			.game-card,.card,.q-card{
+				border-radius:10px;
+				box-shadow:0 2px 8px rgba(43,45,66,.045);
+			}
+			.game-card{
+				padding:14px;
+				border-left:3px solid var(--red);
+			}
+			.game-card:active{
+				transform:translateY(1px);
+			}
+			.btn-primary{
+				background:var(--red);
+				border-radius:10px;
+				box-shadow:0 5px 12px rgba(183,67,54,.22);
+				letter-spacing:0;
+			}
+			.btn-ghost,.opt,.step{
+				border-radius:10px;
+			}
+			.find-item{
+				border-radius:9px;
+			}
+			.sheet{
+				border-radius:16px 16px 0 0;
+			}
+			body{
+				background:#EAE5DB;
+				line-height:1.5;
+			}
+			#app{
+				max-width:480px;
+				min-width:0;
+				isolation:isolate;
+			}
+			.screen{
+				min-width:0;
+				flex-shrink:0;
+			}
+			.banner{
+				text-align:left;
+				padding:28px 24px;
+				background:#F5F1EA;
+				color:var(--ink);
+				border-bottom:2px solid #383B35;
+				border-radius:0;
+				overflow:visible;
+			}
+			.banner .shield{
+				display:none;
+			}
+			.banner .act{
+				font-size:11px;
+				color:#8C483D;
+				letter-spacing:2px;
+				font-weight:700;
+			}
+			.banner h1{
+				font-size:32px;
+				line-height:1.25;
+				letter-spacing:-1px;
+				margin-top:13px;
+				color:#30392F;
+				font-weight:800;
+			}
+			.banner .sub{
+				font-size:13px;
+				line-height:1.8;
+				color:#666B60;
+				margin-top:12px;
+				opacity:1;
+				max-width:310px;
+			}
+			.home-edition{
+				display:flex;
+				justify-content:space-between;
+				font-size:10px;
+				color:#73786D;
+				letter-spacing:1px;
+				margin-bottom:24px;
+				padding-bottom:10px;
+				border-bottom:1px solid var(--line);
+			}
+			.home-heading{
+				display:flex;
+				align-items:center;
+				justify-content:space-between;
+				margin-top:21px;
+				font-size:12px;
+				color:#666B60;
+			}
+			.home-heading b{
+				color:#30392F;
+				font-size:14px;
+			}
+			.game-list{
+				gap:0;
+				margin-top:10px;
+			}
+			.game-card{
+				background:transparent;
+				border:0;
+				border-bottom:1px solid #DDD8CE;
+				border-radius:0;
+				box-shadow:none;
+				padding:17px 0;
+				gap:13px;
+			}
+			.game-card[data-game="match"]{
+				order:-1;
+				background:#E7EEE3;
+				border:1px solid #CDD9C7;
+				border-radius:9px;
+				margin-bottom:5px;
+				padding:15px 13px;
+			}
+			.gc-icon{
+				width:42px;
+				height:44px;
+				font-size:11px;
+				display:flex;
+				flex-direction:column;
+				align-items:center;
+				justify-content:center;
+				gap:2px;
+				color:#4E6552;
+				flex-shrink:0;
+			}
+			.gc-icon svg{
+				width:26px;
+				height:26px;
+			}
+			.gc-body{
+				min-width:0;
+			}
+			.gc-name{
+				font-size:16px;
+				line-height:1.4;
+				color:#30392F;
+			}
+			.gc-desc{
+				font-size:12px;
+				color:#666B60;
+				line-height:1.7;
+			}
+			.gc-best{
+				font-size:10px;
+				font-weight:400;
+				color:#8C483D;
+			}
+			.gc-arrow{
+				font-size:20px;
+				color:#8E9887;
+			}
+			.new-tag{
+				font-size:10px;
+				display:inline-block;
+				vertical-align:middle;
+				padding:2px 5px;
+				background:#3C6B52;
+				color:white;
+				border-radius:3px;
+				margin-left:6px;
+				font-weight:400;
+			}
+			.hotline{
+				flex-shrink:0;
+				padding-top:20px;
+				gap:0;
+			}
+			.hotline div{
+				background:transparent;
+				border:0;
+				border-radius:0;
+				border-right:1px solid #DAD5CA;
+				font-size:10px;
+				color:#77796F;
+			}
+			.hotline div:last-child{
+				border:0;
+			}
+			.hotline b{
+				font-size:18px;
+				color:#8F4437;
+			}
+			.foot{
+				flex-shrink:0;
+				color:#73786D;
+				font-size:10px;
+			}
+			.topbar{
+				flex-wrap:wrap;
+				gap:5px;
+				margin-bottom:12px;
+			}
+			.topbar .pill{
+				padding:4px 8px;
+				font-size:12px;
+			}
+			.q-title{
+				font-size:18px;
+				font-weight:700;
+			}
+			.q-desc{
+				font-size:13px;
+			}
+			.sheet{
+				position:fixed;
+				left:50%;
+				right:auto;
+				width:min(100%,480px);
+				bottom:0;
+				max-height:85dvh;
+				overflow:auto;
+				transform:translate(-50%,105%);
+			}
+			.sheet.show{
+				transform:translate(-50%,0);
+			}
+			#toast{
+				position:fixed;
+				bottom:26px;
+			}
+			button:focus-visible{
+				outline:3px solid #3A806B;
+				outline-offset:3px;
+			}
+			@media(max-width:360px){.screen{padding:14px}.banner{margin:-14px -14px 0;padding:23px 19px}.banner h1{font-size:28px}.match-wrap{padding:8px}.match-board{gap:4px}.tile-drawing{width:22px;height:22px}.tile-label{font-size:8px}.match-meta{font-size:11px}.btn-row{gap:5px}.btn-ghost{font-size:12px;padding:12px 8px}}
+			@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+			
+			#confetti{
+				position:absolute;
+				inset:0;
+				pointer-events:none;
+				overflow:hidden;
+				z-index:40;
+			}
+			#confetti i{
+				position:absolute;
+				top:-14px;
+				width:8px;
+				height:13px;
+				border-radius:2px;
+				animation:fall 1.9s ease-in forwards;
+			}
+			@keyframes fall{to{transform:translateY(115vh) rotate(700deg);opacity:.85}}
+			#toast{
+				position:absolute;
+				left:50%;
+				bottom:90px;
+				transform:translateX(-50%);
+				z-index:50;
+				background:rgba(43,45,66,.92);
+				color:#fff;
+				font-size:13px;
+				padding:10px 18px;
+				border-radius:999px;
+				opacity:0;
+				transition:opacity .3s;
+				pointer-events:none;
+				max-width:82%;
+				text-align:center;
+			}
+			#toast.show{
+				opacity:1;
+			}
+		</style>
+	</head>
+<body>
+<div id="app">
+
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden"><defs>
+    <symbol id="ic-quiz" viewBox="0 0 32 32"><rect x="7" y="5" width="19" height="24" rx="2"/><path d="M12 5V3h9v4h-9M11 14l2 2 4-4M20 14h3M11 23h12"/></symbol>
+    <symbol id="ic-find" viewBox="0 0 32 32"><circle cx="14" cy="14" r="9"/><path d="m21 21 8 8M10 14h8M14 10v8"/></symbol>
+    <symbol id="ic-order" viewBox="0 0 32 32"><path d="M12 7h16M12 16h16M12 25h16M4 5h3v5M4 14h3l-3 5h3M4 24h3v4H4"/></symbol>
+    <symbol id="ic-laser" viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="5"/><path d="M16 1v8M16 23v8M1 16h8M23 16h8"/></symbol>
+    <symbol id="ic-match" viewBox="0 0 32 32"><rect x="3" y="3" width="10" height="10" rx="2"/><rect x="19" y="3" width="10" height="10" rx="2"/><rect x="3" y="19" width="10" height="10" rx="2"/><path d="M24 17v14M17 24h14"/></symbol>
+    <symbol id="ic-plug" viewBox="0 0 32 32"><rect x="6" y="9" width="20" height="14" rx="3"/><path d="M10 14h2M10 18h2M20 14h2M20 18h2M16 23v6M13 6l3-3 3 3"/></symbol>
+    <symbol id="ic-fire" viewBox="0 0 32 32"><path d="M17 3c2 9 10 10 10 17a11 11 0 0 1-22 0c0-5 4-9 7-12-1 6 1 7 3 8 3-4 2-8 2-13Z"/></symbol>
+    <symbol id="ic-boxes" viewBox="0 0 32 32"><path d="M3 17h13v12H3ZM16 17h13v12H16ZM10 5h13v12H10ZM16 5v5M9 17v5M22 17v5"/></symbol>
+    <symbol id="ic-wire" viewBox="0 0 32 32"><path d="M2 8h8v6h5M30 24h-8v-6h-5M10 8v6M22 18v6M18 3l-4 8h6l-4 8M8 23l-3 5M25 4l-3 4"/></symbol>
+    <symbol id="ic-spray" viewBox="0 0 32 32"><rect x="6" y="12" width="15" height="17" rx="3"/><path d="M10 12V7h8v5M14 7V3h7M24 5h4M25 10l4 2M12 18h3v5"/></symbol>
+    <symbol id="ic-water" viewBox="0 0 32 32"><path d="M16 3c-3 5-8 10-8 15a8 8 0 0 0 16 0c0-5-5-10-8-15ZM3 28c4-3 8 3 12 0s8 3 14 0M12 17c-1 3 0 4 2 5"/></symbol>
+  </defs></svg>
+
+  <section id="screen-home" class="screen active">
+    <div class="banner">
+      <div class="home-edition"><span>校园应急安全科普游戏</span></div>
+      <svg class="shield" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2.5 4.5 5.5v5.7c0 4.8 3.2 8.9 7.5 10.3 4.3-1.4 7.5-5.5 7.5-10.3V5.5L12 2.5z"/>
+        <path d="m8.8 12 2.2 2.2 4.2-4.4"/>
+      </svg>
+      <div class="act">青春护航 · 应急有我</div>
+      <h1>应急安全大挑战</h1>
+      <div class="sub">插座发热、楼道堆物、室友突然摔倒……<br>这些事，希望你用不上，也希望你会应对。</div>
+    </div>
+
+    <div class="home-heading"><b>课间玩一局</b><span>5 种玩法 / 随时重来</span></div>
+    <div class="game-list">
+      <button class="game-card" data-game="quiz">
+        <span class="gc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-quiz"/></svg>01</span>
+        <span class="gc-body">
+          <span class="gc-name">应急安全大挑战</span>
+          <span class="gc-desc">10 道情景题。遇到急事，你会先做哪一步？</span>
+          <span class="gc-best" id="best-quiz">尚未通关</span>
+        </span>
+        <span class="gc-arrow">›</span>
+      </button>
+      <button class="game-card" data-game="find">
+        <span class="gc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-find"/></svg>02</span>
+        <span class="gc-body">
+          <span class="gc-name">宿舍隐患大搜查</span>
+          <span class="gc-desc">给宿舍做次检查，找出 13 处不安全的地方。</span>
+          <span class="gc-best" id="best-find">尚未通关</span>
+        </span>
+        <span class="gc-arrow">›</span>
+      </button>
+      <button class="game-card" data-game="order">
+        <span class="gc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-order"/></svg>03</span>
+        <span class="gc-body">
+          <span class="gc-name">应急步骤排序</span>
+          <span class="gc-desc">灭火、岸上救援、待援，试着理清先后顺序。</span>
+          <span class="gc-best" id="best-order">尚未通关</span>
+        </span>
+        <span class="gc-arrow">›</span>
+      </button>
+      <button class="game-card" data-game="laser">
+        <span class="gc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-laser"/></svg>04</span>
+        <span class="gc-body">
+          <span class="gc-name">激光灭患大作战</span>
+          <span class="gc-desc">110 秒找准移动的隐患。安全物品可别点错。</span>
+          <span class="gc-best" id="best-laser">尚未通关</span>
+        </span>
+        <span class="gc-arrow">›</span>
+      </button>
+      <button class="game-card" data-game="match">
+        <span class="gc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-match"/></svg>05</span>
+        <span class="gc-body">
+          <span class="gc-name">隐患消消乐<span class="new-tag">新玩法</span></span>
+          <span class="gc-desc">不限时，隐患连连消。连锁加分，看看能拿多少分。</span>
+          <span class="gc-best" id="best-match">尚未通关</span>
+        </span>
+        <span class="gc-arrow">›</span>
+      </button>
+    </div>
+
+    <div class="hotline">
+      <div><b>119</b>火警</div>
+      <div><b>120</b>医疗急救</div>
+      <div><b>110</b>报警</div>
+      <div><b>12356</b>心理援助</div>
+    </div>
+    <div class="foot">筑牢青春安全防线，科普应急守护校园</div>
+  </section>
+
+  <section id="screen-quiz" class="screen">
+    <div class="topbar">
+      <button class="back-btn" id="btn-quiz-back">‹ 大厅</button>
+      <span class="pill" id="q-index">第 1 题</span>
+      <span class="pill">得分 <b id="q-score">0</b></span>
+      <span class="pill" id="q-streak">加油</span>
+    </div>
+    <div class="progress"><i id="progress-fill"></i></div>
+
+    <div class="q-card">
+      <span class="q-tag" id="q-tag">消防安全</span>
+      <div class="q-title" id="q-title"></div>
+      <div class="q-desc" id="q-desc"></div>
+    </div>
+    <div class="options" id="options"></div>
+  </section>
+
+  <section id="screen-find" class="screen">
+    <div class="topbar">
+      <button class="back-btn" id="btn-find-back">‹ 大厅</button>
+      <span class="pill">已找到 <b id="find-found">0</b>/<b id="find-total">13</b></span>
+      <span class="pill">得分 <b id="find-score">0</b></span>
+      <span class="pill" id="find-time">⏱ 120s</span>
+    </div>
+
+    <div class="q-card">
+      <span class="q-tag" id="find-tag" style="color:#E5383B;background:rgba(229,56,59,0.1)">🏫 宿舍隐患大搜查</span>
+      <div class="q-title">找出藏在宿舍里的 13 处隐患</div>
+      <div class="q-desc">点击场景里的物品进行检查：找到隐患 +10 分，误点安全物品 -3 分。限时 120 秒，仔细看！</div>
+      <div class="find-grid" id="find-grid"></div>
+    </div>
+  </section>
+
+  <section id="screen-order" class="screen">
+    <div class="topbar">
+      <button class="back-btn" id="btn-order-back">‹ 大厅</button>
+      <span class="pill">环节 <b id="order-round">1</b>/3</span>
+      <span class="pill">得分 <b id="order-score">0</b></span>
+    </div>
+
+    <div class="q-card">
+      <span class="q-tag" id="order-tag">🧩 应急步骤排序</span>
+      <div class="q-title" id="order-title"></div>
+      <div class="q-desc">按正确顺序依次点击步骤：排对 +10 分，排错 -5 分。三个环节共 13 个步骤。</div>
+    </div>
+    <div class="order-steps" id="order-steps"></div>
+  </section>
+
+  <section id="screen-laser" class="screen">
+    <div class="topbar">
+      <button class="back-btn" id="btn-laser-back">‹ 大厅</button>
+      <span class="pill">得分 <b id="laser-score">0</b></span>
+      <span class="pill">连击 <b id="laser-combo">0</b></span>
+      <span class="pill" id="laser-time">⏱ 60s</span>
+    </div>
+    <div class="laser-arena" id="laser-arena">
+      <svg id="laser-svg"><line id="laser-beam" x1="0" y1="0" x2="0" y2="0"/></svg>
+      <div class="laser-cannon" id="laser-cannon"></div>
+    </div>
+    <div class="laser-tip">点击移动的隐患，发射激光消灭它（+10 分）<br>误射安全物品 -5 分，看清名字再出手！</div>
+  </section>
+
+  <section id="screen-match" class="screen">
+    <div class="topbar">
+      <button class="back-btn" id="btn-match-back">‹ 大厅</button>
+      <span class="pill">得分 <b id="match-score">0</b></span>
+      <span class="pill">连消 <b id="match-combo">0</b></span>
+      <span class="pill">最高 <b id="match-best">0</b></span>
+    </div>
+
+    <div class="q-card">
+      <span class="q-tag" style="color:#35664F;background:#E7EEE3">05 / 隐患消消乐</span>
+      <div class="q-title">连成三个，把隐患清出去</div>
+      <div class="q-desc">点选或滑动，交换上下左右的相邻棋子。横竖三个起消，连锁会加更多的分数哦。</div>
+    </div>
+    <div class="match-wrap">
+      <div class="match-board" id="match-board" aria-label="隐患消消乐棋盘" aria-busy="false"></div>
+      <div class="match-meta"><span>消除 <b id="match-cleared">0</b> 个</span><span id="match-message" aria-live="polite">选择一个图标开始</span></div>
+      <div class="match-tools"><button id="btn-match-hint">提示一步</button><button id="btn-match-shuffle">重新洗牌 · 3</button><span>每格 10 分</span></div>
+      <div class="match-tip" id="match-lesson" aria-live="polite">棋子上的隐患来自校园日常。每次消除，这里会留下一条处理建议。</div>
+      <button class="match-finish" id="btn-match-finish">结束本局 · 查看得分</button>
+    </div>
+  </section>
+
+  <section id="screen-result" class="screen">
+    <div class="result-head">
+      <div class="ring">
+        <svg width="150" height="150">
+          <circle cx="75" cy="75" r="52" fill="none" stroke="#F3E7DA" stroke-width="13"/>
+          <circle id="ring-fill" cx="75" cy="75" r="52" fill="none" stroke="#E5383B" stroke-width="13"
+                  stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"
+                  style="transition:stroke-dashoffset 1s ease"/>
+        </svg>
+        <div class="num"><b id="final-score">0</b><span id="final-max">满分 100</span></div>
+      </div>
+      <div class="rank" id="rank-title"></div>
+      <div class="rank-comment" id="rank-comment"></div>
+    </div>
+
+    <div class="stats" id="result-stats"></div>
+    <div class="review" id="review-box"></div>
+
+    <div class="btn-row">
+      <button class="btn-ghost" id="btn-home">返回大厅</button>
+      <button class="btn-ghost" id="btn-share">复制成绩</button>
+      <button class="btn-primary" id="btn-again">再来一次</button>
+    </div>
+
+    <div class="foot">真实紧急情况请拨打 119 / 120 / 110，心理援助热线 12356</div>
+  </section>
+
+  <div class="sheet" id="sheet">
+    <div class="sheet-head"><span id="sheet-icon"></span><span id="sheet-title"></span></div>
+    <div class="sheet-explain" id="sheet-explain"></div>
+    <div class="sheet-tip" id="sheet-tip"></div>
+    <button class="btn-primary" id="sheet-btn">继续</button>
+  </div>
+
+  <div id="confetti"></div>
+  <div id="toast"></div>
+</div>
+
+<script>
+var QUESTIONS = [
+  {
+    cat:"消防安全", icon:"🔥", title:"宿舍充电宝半夜冒烟",
+    desc:"深夜的宿舍里，你发现桌上的充电宝开始冒烟，还有一股焦糊味。此时应该怎么做？",
+    options:[
+      {t:"拿起冒烟的充电宝，赶紧扔进垃圾桶", ok:false},
+      {t:"远离冒烟设备，提醒室友撤离，在安全位置拨打119；仅在确保安全时切断供电", ok:true},
+      {t:"接一碗水泼上去，用水浇灭最可靠", ok:false},
+      {t:"打开电风扇，把烟吹散就好了", ok:false}
+    ],
+    explain:"冒烟的电池可能迅速起火并喷出高温物质。不要徒手拿起、移动，也不要靠近吸入烟气。先远离危险、提醒他人撤离并报警；只有不靠近烟火且能安全操作时才切断供电。",
+    tip:"安全锦囊：充电设备人走断电，夜间充电不要放在床上、沙发上。"
+  },
+  {
+    cat:"消防安全", icon:"💨", title:"楼道被浓烟封堵",
+    desc:"教学楼突发火灾，楼道里已充满浓烟无法下楼，这时你应该？",
+    options:[
+      {t:"乘电梯快速下到一楼", ok:false},
+      {t:"用湿毛巾捂住口鼻，弯腰猛冲进烟雾里下楼", ok:false},
+      {t:"退回教室关紧门窗，用湿布堵住门缝，拨打119说明位置，到窗口挥动鲜艳衣物呼救", ok:true},
+      {t:"打开所有门窗让空气流通，等烟雾自己散去", ok:false}
+    ],
+    explain:"火灾中浓烟是“第一杀手”，电梯随时可能断电；无法撤离时要“固守待援”：关门、堵缝、报警、呼救，把位置说清楚，消防员才能最快找到你。",
+    tip:"湿毛巾不能阻挡有毒气体，不要因捂住口鼻就尝试穿越浓烟。"
+  },
+  {
+    cat:"防灾避险", icon:"🏢", title:"上课时突发地震",
+    desc:"上课中教室突然剧烈摇晃——地震了！你的第一反应应该是？",
+    options:[
+      {t:"马上收拾书包，有序撤离到操场", ok:false},
+      {t:"就近伏低，躲到结实的课桌下，护住头颈并抓牢桌腿；震动停止后再有序撤离", ok:true},
+      {t:"立刻冲向电梯间下楼", ok:false},
+      {t:"挤到门口，争着第一个跑出去", ok:false}
+    ],
+    explain:"室内突发强烈震动时，牢记“伏地、遮挡、手抓牢”，就近到结实的桌下保护头颈，避开玻璃和可能倒塌的物品。不要冲向楼梯或电梯；震动停止后，按现场指引走楼梯有序撤到空旷处。",
+    tip:"安全锦囊：平时留意教学楼和宿舍的两条逃生路线，地震、火灾都用得上。"
+  },
+  {
+    cat:"应急处置", icon:"⚡", title:"室友触电倒地",
+    desc:"室友碰到漏电插座倒地不起，你最该做的第一步是？",
+    options:[
+      {t:"直接上手把他拉开", ok:false},
+      {t:"先切断电源，或用干燥的木棍、塑料物挑开电线，再施救并拨打120", ok:true},
+      {t:"先掐人中把他掐醒再说", ok:false},
+      {t:"打一盆水泼醒他", ok:false}
+    ],
+    explain:"触电时徒手接触会连环触电；必须先断电或用绝缘体挑离电线；确认安全后检查呼吸，若没有呼吸立即做心肺复苏，同时拨打 120。",
+    tip:"安全锦囊：任何急救的第一步都是“确保现场安全”，包括施救者自己。"
+  },
+  {
+    cat:"应急处置", icon:"🌊", title:"同伴落水",
+    desc:"同伴不慎落水，你并不擅长游泳，正确的救援方式是？",
+    options:[
+      {t:"立刻跳下水，人命关天顾不了那么多", ok:false},
+      {t:"同学们手拉手组成“人链”下水拉他", ok:false},
+      {t:"大声呼救并拨打110/120，寻找竹竿、绳索、漂浮物抛给他；趴在地上降低重心递出救援物", ok:true},
+      {t:"站在岸边大声喊他的名字", ok:false}
+    ],
+    explain:"水中救援讲究“岸上救援优于水中救援”：抛、伸、划。盲目下水和手拉手“人链”都极易造成更多伤亡；递救援物时要趴下，防止被拽入水。",
+    tip:"安全锦囊：即使会游泳，也不建议直接下水救人，先抛物、伸竿、划船过去。"
+  },
+  {
+    cat:"校园安全", icon:"👥", title:"拥挤人群中摔倒",
+    desc:"大型活动现场人群拥挤，你不慎摔倒在地，应该怎么做？",
+    options:[
+      {t:"拼命挣扎，赶紧爬起来", ok:false},
+      {t:"侧身蜷曲成“侧睡”姿势：双手十字护住后脑和脖颈，双膝收向胸口保护胸腹", ok:true},
+      {t:"仰面平躺，大口喘气", ok:false},
+      {t:"大声尖叫，让周围的人都停下来", ok:false}
+    ],
+    explain:"踩踏中倒地后最危险的是胸腹受压和头部受伤；侧卧蜷缩能护住要害，为救援争取时间；平时也要避开拥挤人流、不逆流行走。",
+    tip:"安全锦囊：人多场合不凑热闹、不逆行，感觉拥挤时尽量靠边、顺着人流移动。"
+  },
+  {
+    cat:"应急处置", icon:"🧪", title:"药液溅入眼睛",
+    desc:"实验课上，不明液体突然溅入眼睛，正确的处理方式是？",
+    options:[
+      {t:"揉一揉，用纸巾擦干", ok:false},
+      {t:"立即用大量流动清水冲洗眼睛至少15分钟，随后尽快就医", ok:true},
+      {t:"滴几滴眼药水，休息一会儿", ok:false},
+      {t:"闭上眼，等它自己恢复", ok:false}
+    ],
+    explain:"化学灼伤眼睛分秒必争：流动清水持续冲洗15分钟以上，能最大程度稀释化学物质；揉眼会扩大损伤；事后务必就医检查。",
+    tip:"安全锦囊：实验室操作务必按要求戴好护目镜，安全第一。"
+  },
+  {
+    cat:"应急处置", icon:"🩹", title:"疑似骨折",
+    desc:"同学摔倒后小臂明显变形，疑似骨折，现场应该怎么处理？",
+    options:[
+      {t:"帮他把骨头按回原位", ok:false},
+      {t:"用力按摩，帮他活血消肿", ok:false},
+      {t:"不要随意搬动，用书本、纸板固定伤处（固定范围超过骨折上下两个关节），拨打120", ok:true},
+      {t:"让他活动一下，看还能不能动", ok:false}
+    ],
+    explain:"骨折后乱按可能伤到血管神经；固定住、不让断骨活动才是正确做法；若骨头外露（开放性骨折）不要自行处理，可压迫止血，等待专业救援。",
+    tip:"安全锦囊：固定时露出手指或脚趾，方便观察血液循环。"
+  },
+  {
+    cat:"生命安全", icon:"💬", title:"室友情绪异常",
+    desc:"室友连续多日情绪低落，还说“不想活了”，你应该？",
+    options:[
+      {t:"答应替他保密，不告诉任何人", ok:false},
+      {t:"批评他“别想太多，坚强一点”", ok:false},
+      {t:"认真倾听、表达关心和陪伴，及时报告辅导员或老师，陪他寻求专业心理帮助，必要时拨打心理援助热线", ok:true},
+      {t:"假装没听见，避免尴尬", ok:false}
+    ],
+    explain:"认真倾听、陪伴并及时求助，不把轻生表达当作玩笑，也不要承诺替他保密。联系辅导员、学校心理中心或拨打12356。若已出现迫切的人身危险，立即联系110或120，不让对方独处。",
+    tip:"安全锦囊：陪伴本身就是一种力量，告诉他“我在，我们一起想办法”。"
+  },
+  {
+    cat:"应急处置", icon:"📞", title:"拨打火警119",
+    desc:"发现火情拨打119时，最该说清楚的内容是？",
+    options:[
+      {t:"只喊“快来救火”就挂断", ok:false},
+      {t:"详细地址（校区、楼栋、楼层、房间）、什么东西着火、火势大小、有无人员被困、联系电话，并到路口接引消防车", ok:true},
+      {t:"只留下自己的姓名", ok:false},
+      {t:"先说一堆感受，让接警员自己判断", ok:false}
+    ],
+    explain:"信息越准确，救援越快越安全；说完等接警员先挂电话；保持电话畅通，并派人到路口挥动衣物引导消防车，能省下宝贵的几分钟。",
+    tip:"安全锦囊：平时记住学校最近消防栓、灭火器的位置，关键时刻人人都是第一响应人。"
+  }
+];
+
+var FIND_ITEMS = [
+  {icon:"🔌", name:"插线板“满座”", hazard:true,
+   why:"一个插线板同时带动多个大功率电器，负荷过大容易发热起火。",
+   fix:"大功率电器分开线路使用，睡前拔掉不用的插头。"},
+  {icon:"🧯", name:"在有效期内的灭火器", hazard:false},
+  {icon:"🔋", name:"床上充电的充电宝", hazard:true,
+   why:"充电宝压在被子下散热差，鼓包、短路都可能引发火灾。",
+   fix:"放在硬桌面上充，充满及时拔，鼓包立即停用。"},
+  {icon:"🛵", name:"楼道里给电动车充电", hazard:true,
+   why:"电瓶起火会产生大量毒烟，楼道是逃生通道，一旦被堵后果严重。",
+   fix:"电动车和电瓶不进楼、不入户，到集中充电点充电。"},
+  {icon:"📱", name:"充满就拔的手机", hazard:false},
+  {icon:"🪟", name:"封死窗户的防盗窗", hazard:true,
+   why:"防盗窗把逃生和救援的口子全焊死了，火灾时屋里的人出不来，消防员也难施救。",
+   fix:"装留有逃生口的防盗窗，钥匙放在随手能拿到的地方。"},
+  {icon:"🕯️", name:"窗帘边的蚊香", hazard:true,
+   why:"蚊香明火温度高，挨着窗帘、纸张极易被引燃。",
+   fix:"明火远离可燃物，人走熄火，可换用电热蚊香液。"},
+  {icon:"💡", name:"正常使用的台灯", hazard:false},
+  {icon:"📦", name:"堵住安全出口的纸箱", hazard:true,
+   why:"杂物堵住安全出口，火灾时就是堵住生命通道。",
+   fix:"安全出口和楼道随时保持畅通，杂物及时清理。"},
+  {icon:"🚬", name:"床上未熄灭的烟头", hazard:true,
+   why:"未熄灭的烟头中心温度极高，落在床褥、纸张上会阴燃，等闻到焦味时往往已烧成一片。",
+   fix:"不在宿舍卧床吸烟，烟头彻底掐灭后再丢弃。"},
+  {icon:"🔔", name:"完好的烟感报警器", hazard:false},
+  {icon:"⚡", name:"绝缘皮破损的电线", hazard:true,
+   why:"电线破皮可能漏电触电，也可能短路打火。",
+   fix:"不要触碰裸露线芯，停止使用损坏设备，请专业人员检修或更换。"},
+  {icon:"🚪", name:"保持常闭的防火门", hazard:false},
+  {icon:"👕", name:"电暖器上搭盖的湿衣物", hazard:true,
+   why:"电暖器出风口温度高，盖上的衣物热量散不出去，时间一长就会被烤燃。",
+   fix:"电暖器周围一米内不放易燃物，衣物用衣架晾干。"},
+  {icon:"🛏️", name:"整洁的床铺", hazard:false},
+  {icon:"🚭", name:"无烟无明火的宿舍", hazard:false},
+  {icon:"📋", name:"张贴好的疏散示意图", hazard:false},
+  {icon:"🔦", name:"放在床头的应急手电", hazard:false},
+  {icon:"🍳", name:"宿舍里的热得快/电煮锅", hazard:true,
+   why:"热得快、电煮锅、电炉等设备功率较大，可能超出宿舍线路和插座的承载能力；无人看管时也容易引发火灾。",
+   fix:"违规电器不使用，饮水去开水房，做饭去食堂。"},
+  {icon:"🧴", name:"明火旁的喷雾剂", hazard:true,
+   why:"花露水、防晒喷雾、发胶含酒精等易燃成分，遇明火或高温可能轰燃。",
+   fix:"使用喷雾剂远离明火与电源，避免暴晒。"},
+  {icon:"🛁", name:"湿滑无防滑垫的浴室地面", hazard:true,
+   why:"浴室地砖湿滑，摔倒可能造成骨折、颅脑损伤，是宿舍最常见的意外伤害之一。",
+   fix:"铺防滑垫、穿防滑拖鞋，及时擦干积水。"},
+  {icon:"🔒", name:"被链条锁住的安全出口", hazard:true,
+   why:"安全出口上锁或缠链条，火灾时逃生通道直接失效，此类事故屡有通报。",
+   fix:"发现出口被锁立即向宿管、辅导员反映，绝不私自锁堵。"},
+  {icon:"🚿", name:"保持干燥防滑的浴室地面", hazard:false},
+  {icon:"🔑", name:"放在手边的逃生窗钥匙", hazard:false},
+  {icon:"🩹", name:"常备的急救箱", hazard:false}
+];
+var FIND_HAZ_COUNT = 13;
+var FIND_TIME = 120;
+
+var ORDER_ROUNDS = [
+  {title:"灭火器使用四步", point:"站在上风方向、对准火焰根部，是灭火成败的两个关键；火势控制不住时果断撤离，交给消防员。",
+   steps:[
+     {t:"提起灭火器，快速赶到火场上风方向"},
+     {t:"拔掉保险销"},
+     {t:"握住喷管，对准火焰根部"},
+     {t:"压下压把，左右扫射灭火"}]},
+  {title:"岸上救援落水同伴", point:"岸上救援永远优先于下水救援；递救援物时趴低重心，防止被拽入水。",
+   steps:[
+     {t:"大声呼救，呼叫更多人来帮忙"},
+     {t:"拨打 110 / 120，说清地点"},
+     {t:"抛投漂浮物，或伸出竹竿、绳索"},
+     {t:"趴低重心，把落水者拉上岸"}]},
+  {title:"浓烟楼道固守待援", point:"浓烟比明火更致命；说清位置、坚持呼救，才能把救援力量引过来。",
+   steps:[
+     {t:"退入没有烟雾的房间，关紧门窗"},
+     {t:"用湿毛巾、湿布堵住门缝"},
+     {t:"拨打 119，说清地址和被困位置"},
+     {t:"到窗口挥动鲜艳衣物呼救"},
+     {t:"消防员到场后，听从指挥有序撤离"}]}
+];
+ORDER_ROUNDS.forEach(function(r){
+  r.steps.forEach(function(s, i){ s.i = i; });
+});
+var ORDER_TOTAL_STEPS = ORDER_ROUNDS.reduce(function(n, r){ return n + r.steps.length; }, 0);
+
+var CAT_COLORS = {
+  "消防安全":"#E5383B",
+  "防灾避险":"#3A86FF",
+  "应急处置":"#F77F00",
+  "校园安全":"#2A9D8F",
+  "生命安全":"#8338EC"
+};
+var LETTERS = ["A","B","C","D"];
+var RING_LEN = 326.7; /* 2 * PI * 52 */
+var GAME_NAMES = {quiz:"应急安全大挑战", find:"宿舍隐患大搜查", order:"应急步骤排序", laser:"激光灭患大作战", match:"隐患消消乐"};
+
+function $(id){ return document.getElementById(id); }
+var navigationVersion = 0;
+function show(id){
+  navigationVersion++;
+  var screens = document.querySelectorAll(".screen");
+  for (var i=0;i<screens.length;i++) screens[i].classList.remove("active");
+  $(id).classList.add("active");
+  $("sheet").classList.remove("show");
+  sheetCallback = null;
+  window.scrollTo(0, 0);
+}
+function toast(msg){
+  var t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(function(){ t.classList.remove("show"); }, 2200);
+}
+
+function getBest(g){
+  try{ return parseInt(localStorage.getItem("yj_best_" + g) || "0", 10) || 0; }catch(e){ return 0; }
+}
+function saveBest(g, s){
+  try{ if(s > getBest(g)) localStorage.setItem("yj_best_" + g, String(s)); }catch(e){}
+}
+function renderHome(){
+  ["quiz","find","order","laser","match"].forEach(function(g){
+    var b = getBest(g);
+    $("best-" + g).textContent = b > 0 ? ("最佳 " + b + " 分") : "尚未通关";
+  });
+}
+
+var actx = null;
+function beep(kind){
+  try{
+    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    var plans = {
+      click:[[600,.05]],
+      ok:[[660,.08],[880,.1]],
+      bad:[[200,.2]],
+      fin:[[523,.1],[659,.1],[784,.16]]
+    };
+    var t = actx.currentTime;
+    (plans[kind] || plans.click).forEach(function(p){
+      var o = actx.createOscillator(), g = actx.createGain();
+      o.type = "sine"; o.frequency.value = p[0];
+      g.gain.setValueAtTime(.12, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + p[1]);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t); o.stop(t + p[1]);
+      t += p[1];
+    });
+  }catch(e){}
+}
+
+var sheetCallback = null;
+function showSheet(o, cb){
+  $("sheet-icon").textContent = o.icon || "";
+  $("sheet-title").textContent = o.title || "";
+  $("sheet-title").style.color = o.color || "#2B2D42";
+  $("sheet-explain").textContent = o.explain || "";
+  var tip = $("sheet-tip");
+  if(o.tip){ tip.style.display = "block"; tip.textContent = "💡 " + o.tip; }
+  else{ tip.style.display = "none"; }
+  $("sheet-btn").textContent = o.btn || "继续";
+  sheetCallback = cb || null;
+  $("sheet").classList.add("show");
+}
+$("sheet-btn").onclick = function(){
+  beep("click");
+  $("sheet").classList.remove("show");
+  var cb = sheetCallback;
+  sheetCallback = null;
+  var version = navigationVersion;
+  if(cb) setTimeout(function(){ if(version === navigationVersion) cb(); }, 260);
+};
+
+var lastGame = "quiz";
+function goHome(){
+  stopLaser();
+  stopMatch();
+  if(findState){ findState.done = true; clearInterval(findState.timer); }
+  show("screen-home");
+  renderHome();
+}
+Array.prototype.forEach.call(document.querySelectorAll(".game-card"), function(card){
+  card.onclick = function(){ startGame(card.getAttribute("data-game")); };
+});
+function startGame(g){
+  beep("click");
+  lastGame = g;
+  if(g === "find") startFind();
+  else if(g === "order") startOrder();
+  else if(g === "laser") startLaser();
+  else if(g === "match") startMatch();
+  else { resetState(); show("screen-quiz"); renderQuestion(); }
+}
+
+var state = null;
+function resetState(){
+  state = { i:0, score:0, streak:0, best:0, wrong:[], locked:false };
+}
+$("btn-quiz-back").onclick = goHome;
+
+function renderQuestion(){
+  var q = QUESTIONS[state.i];
+  state.locked = false;
+
+  $("q-index").textContent = "第 " + (state.i + 1) + " 题";
+  $("q-score").textContent = state.score;
+  $("q-streak").textContent = state.streak > 1 ? ("连对 " + state.streak) : "加油";
+  $("progress-fill").style.width = (state.i / QUESTIONS.length * 100) + "%";
+
+  var tag = $("q-tag");
+  tag.textContent = q.icon + " " + q.cat;
+  tag.style.color = CAT_COLORS[q.cat];
+  tag.style.background = CAT_COLORS[q.cat] + "1A";
+
+  $("q-title").textContent = q.title;
+  $("q-desc").textContent = q.desc;
+
+  var box = $("options");
+  box.innerHTML = "";
+  q.options.forEach(function(op, j){
+    var b = document.createElement("button");
+    b.className = "opt";
+    var letter = document.createElement("span");
+    letter.className = "opt-letter";
+    letter.textContent = LETTERS[j];
+    var text = document.createElement("span");
+    text.className = "opt-text";
+    text.textContent = op.t;
+    b.appendChild(letter); b.appendChild(text);
+    b.onclick = function(){ choose(j); };
+    box.appendChild(b);
+  });
+}
+
+function choose(j){
+  if(state.locked) return;
+  state.locked = true;
+
+  var q = QUESTIONS[state.i];
+  var opts = document.querySelectorAll(".opt");
+  for (var k=0;k<opts.length;k++){
+    opts[k].classList.add("disabled");
+    if(q.options[k].ok) opts[k].classList.add("right");
+  }
+  if(!q.options[j].ok) opts[j].classList.add("wrong");
+
+  var ok = q.options[j].ok;
+  if(ok){
+    state.score += 10;
+    state.streak++;
+    if(state.streak > state.best) state.best = state.streak;
+    beep("ok");
+  }else{
+    state.wrong.push(state.i);
+    state.streak = 0;
+    beep("bad");
+  }
+
+  $("q-score").textContent = state.score;
+  $("q-streak").textContent = state.streak > 1 ? ("连对 " + state.streak) : "加油";
+
+  showSheet({
+    icon: ok ? "✅" : "❌",
+    title: ok ? "回答正确 +10" : "回答错误",
+    color: ok ? "#2A9D8F" : "#D00000",
+    explain: q.explain,
+    tip: q.tip,
+    btn: (state.i === QUESTIONS.length - 1) ? "查看成绩" : "下一题"
+  }, function(){
+    state.i++;
+    if(state.i >= QUESTIONS.length) showQuizResult();
+    else renderQuestion();
+  });
+}
+
+function showQuizResult(){
+  var s = state.score;
+  var right = s / 10;
+  var rank, comment;
+  if(s === 100){ rank = "校园应急安全大使"; comment = "满分！你的安全意识和处置知识都非常扎实，快把这些知识讲给更多同学听。"; }
+  else if(s >= 80){ rank = "应急安全达人"; comment = "非常出色！绝大多数场景你都能做出安全选择，把错题回顾再读一遍就更稳了。"; }
+  else if(s >= 60){ rank = "平安守护者"; comment = "合格！核心知识已经掌握，建议重点看看错题里的科普讲解。"; }
+  else{ rank = "安全新星"; comment = "别灰心，应急知识靠日常积累，再玩一次一定有进步！"; }
+
+  var list = state.wrong.map(function(idx){
+    var q = QUESTIONS[idx];
+    var okText = "";
+    q.options.forEach(function(op, k){ if(op.ok) okText = LETTERS[k] + ". " + op.t; });
+    return {t:"✗ " + q.cat + "｜" + q.title, d:"正确做法：" + okText, cls:"rq"};
+  });
+
+  fillResult({
+    game:"quiz", score:s, max:100, maxText:"满分 100",
+    title:"称号：" + rank, comment:comment,
+    stats:[{v:right, l:"答对"},{v:QUESTIONS.length - right, l:"答错"},{v:state.best, l:"最高连对"}],
+    listTitle: state.wrong.length ? ("错题回顾（" + state.wrong.length + " 题）") : "",
+    list:list, confetti:s >= 80
+  });
+}
+
+var findState = null;
+
+function startFind(){
+  findState = {found:0, wrong:0, score:0, timeLeft:FIND_TIME, timer:null, done:false, locked:false};
+  $("find-found").textContent = "0";
+  $("find-total").textContent = FIND_HAZ_COUNT;
+  $("find-score").textContent = "0";
+  $("find-time").textContent = "⏱ " + FIND_TIME + "s";
+  $("find-time").style.color = "";
+
+  var box = $("find-grid");
+  box.innerHTML = "";
+  FIND_ITEMS.forEach(function(it, i){
+    var b = document.createElement("button");
+    b.className = "find-item";
+    var ic = document.createElement("span");
+    ic.className = "fi-icon"; ic.textContent = it.icon;
+    var nm = document.createElement("span");
+    nm.className = "fi-name"; nm.textContent = it.name;
+    b.appendChild(ic); b.appendChild(nm);
+    b.onclick = function(){ findClick(i, b); };
+    box.appendChild(b);
+  });
+
+  show("screen-find");
+  findState.timer = setInterval(function(){
+    if(findState.done) return;
+    findState.timeLeft--;
+    $("find-time").textContent = "⏱ " + findState.timeLeft + "s";
+    if(findState.timeLeft <= 10) $("find-time").style.color = "#D00000";
+    if(findState.timeLeft <= 0) endFind(false);
+  }, 1000);
+}
+
+function findClick(i, el){
+  if(findState.done || findState.locked) return;
+  var it = FIND_ITEMS[i];
+
+  if(it.hazard){
+    if(el.classList.contains("found")) return;
+    el.classList.add("found");
+    findState.found++;
+    findState.score += 10;
+    beep("ok");
+    $("find-found").textContent = findState.found;
+    $("find-score").textContent = findState.score;
+    if(findState.found >= FIND_HAZ_COUNT){
+      endFind(true);
+      return;
+    }
+    findState.locked = true;
+    showSheet({
+      icon:"✅", title:"发现隐患 +10", color:"#2A9D8F",
+      explain:it.why, tip:it.fix, btn:"继续搜查"
+    }, function(){ findState.locked = false; });
+  }else{
+    el.classList.add("miss");
+    setTimeout(function(){ el.classList.remove("miss"); }, 450);
+    findState.wrong++;
+    findState.score = Math.max(0, findState.score - 3);
+    beep("bad");
+    toast("这里暂时安全，再仔细看看～");
+    $("find-score").textContent = findState.score;
+  }
+}
+
+function endFind(allFound){
+  findState.done = true;
+  if(findState.timer){ clearInterval(findState.timer); findState.timer = null; }
+
+  var found = findState.found;
+  var score = findState.score;
+  var title, comment;
+  if(allFound && findState.wrong === 0){
+    title = "隐患侦察达人";
+    comment = "13 处隐患一击命中，零误点！这双“安全眼”可以借给同学们用用。";
+  }else if(allFound){
+    title = "隐患侦察员";
+    comment = "13 处隐患全部找到！对照清单记牢每处的正确做法。";
+  }else if(found >= 7){
+    title = "见习侦察员";
+    comment = "时间到！找到了 " + found + " 处，剩下的对照清单记一记。";
+  }else{
+    title = "安全新丁";
+    comment = "时间到！只找到 " + found + " 处，把下面的隐患清单看一遍，你会进步很快。";
+  }
+
+  var list = FIND_ITEMS.filter(function(it){ return it.hazard; }).map(function(it){
+    return {t:"⚠ " + it.icon + " " + it.name, d:it.why + " 正确做法：" + it.fix, cls:"ra"};
+  });
+
+  fillResult({
+    game:"find", score:score, max:FIND_HAZ_COUNT * 10, maxText:"满分 130",
+    title:title, comment:comment,
+    stats:[{v:found + "/" + FIND_HAZ_COUNT, l:"找出隐患"},{v:findState.wrong, l:"误点次数"},{v:(FIND_TIME - findState.timeLeft) + "s", l:"用时"}],
+    listTitle:"宿舍隐患清单（附正确做法）",
+    list:list, confetti:allFound && findState.wrong <= 2
+  });
+}
+
+$("btn-find-back").onclick = function(){
+  if(findState && findState.timer){ clearInterval(findState.timer); findState.timer = null; }
+  goHome();
+};
+
+var orderState = null;
+
+function startOrder(){
+  orderState = {r:0, placed:0, roundWrong:0, score:0, mistakes:0, correct:0, locked:false};
+  show("screen-order");
+  renderRound();
+}
+
+function renderRound(){
+  var r = ORDER_ROUNDS[orderState.r];
+  orderState.placed = 0;
+  orderState.roundWrong = 0;
+
+  $("order-round").textContent = orderState.r + 1;
+  $("order-score").textContent = orderState.score;
+  $("order-tag").textContent = "🧩 应急步骤排序 · 第 " + (orderState.r + 1) + " 环节";
+  $("order-title").textContent = r.title;
+
+  var box = $("order-steps");
+  box.innerHTML = "";
+  var steps = r.steps.slice();
+  for(var i=steps.length-1;i>0;i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = steps[i]; steps[i] = steps[j]; steps[j] = t;
+  }
+  steps.forEach(function(s){
+    var b = document.createElement("button");
+    b.className = "step";
+    b.setAttribute("data-idx", s.i);
+    var no = document.createElement("span");
+    no.className = "step-no";
+    var tx = document.createElement("span");
+    tx.className = "step-t"; tx.textContent = s.t;
+    b.appendChild(no); b.appendChild(tx);
+    b.onclick = function(){ orderClick(s.i, b); };
+    box.appendChild(b);
+  });
+}
+
+function orderClick(idx, el){
+  if(orderState.locked) return;
+  var r = ORDER_ROUNDS[orderState.r];
+
+  if(idx === orderState.placed){
+    el.classList.add("right");
+    el.querySelector(".step-no").textContent = orderState.placed + 1;
+    orderState.placed++;
+    orderState.correct++;
+    orderState.score += 10;
+    beep("ok");
+    $("order-score").textContent = orderState.score;
+    if(orderState.placed === r.steps.length){
+      orderState.locked = true;
+      setTimeout(function(){
+        if(!$("screen-order").classList.contains("active")) return;
+        showSheet({
+          icon:"🎉", title:"排序完全正确！", color:"#2A9D8F",
+          explain:r.point,
+          btn: (orderState.r === ORDER_ROUNDS.length - 1) ? "查看成绩" : "下一环节"
+        }, orderNext);
+      }, 350);
+    }
+  }else{
+    el.classList.add("wrong");
+    setTimeout(function(){ el.classList.remove("wrong"); }, 450);
+    orderState.score = Math.max(0, orderState.score - 5);
+    orderState.mistakes++;
+    beep("bad");
+    toast("顺序不对，再想想～");
+    $("order-score").textContent = orderState.score;
+  }
+}
+
+function orderNext(){
+  orderState.r++;
+  if(orderState.r >= ORDER_ROUNDS.length){
+    showOrderResult();
+  }else{
+    orderState.locked = false;
+    renderRound();
+  }
+}
+
+function showOrderResult(){
+  var score = orderState.score;
+  var title, comment;
+  if(orderState.mistakes === 0){
+    title = "应急流程大师";
+    comment = "13 个步骤零失误，流程意识非常棒！可以把顺序讲给室友听。";
+  }else if(orderState.mistakes <= 3){
+    title = "流程排序达人";
+    comment = "整体很稳！把出错的步骤再顺一遍，形成肌肉记忆。";
+  }else{
+    title = "流程练习生";
+    comment = "别急，先把下面三组正确顺序读熟，再来一次一定进步。";
+  }
+
+  var list = ORDER_ROUNDS.map(function(r){
+    var seq = r.steps.map(function(s, i){ return (i + 1) + ". " + s.t; }).join("  ");
+    return {t:"🧩 " + r.title, d:seq + " ｜ " + r.point, cls:"ra"};
+  });
+
+  fillResult({
+    game:"order", score:score, max:ORDER_TOTAL_STEPS * 10, maxText:"满分 " + ORDER_TOTAL_STEPS * 10,
+    title:title, comment:comment,
+    stats:[{v:orderState.correct + "/" + ORDER_TOTAL_STEPS, l:"步骤正确"},{v:orderState.mistakes, l:"失误次数"},{v:ORDER_ROUNDS.length + "/3", l:"完成环节"}],
+    listTitle:"三组应急流程（正确顺序）",
+    list:list, confetti:orderState.mistakes === 0
+  });
+}
+
+$("btn-order-back").onclick = goHome;
+
+var LASER_TIME = 110;     
+var LASER_LIFE = 10000;   
+var LASER_MAX = 4;        
+var LASER_INTERVAL = 1000;
+var laserState = null;
+
+function startLaser(){
+  stopLaser(); 
+  laserState = {
+    score:0, hits:0, misses:0, combo:0, best:0,
+    timeLeft:LASER_TIME, items:[], done:false,
+    pool:FIND_ITEMS.map(function(_, i){ return i; }),
+    timer:null, spawner:null, raf:null, beamTimer:null
+  };
+  $("laser-score").textContent = "0";
+  $("laser-combo").textContent = "0";
+  $("laser-time").textContent = "⏱ " + LASER_TIME + "s";
+  $("laser-time").style.color = "";
+
+  show("screen-laser");
+  spawnLaserItem();
+  laserState.spawner = setInterval(spawnLaserItem, LASER_INTERVAL);
+  laserState.timer = setInterval(function(){
+    if(laserState.done) return;
+    laserState.timeLeft--;
+    $("laser-time").textContent = "⏱ " + laserState.timeLeft + "s";
+    if(laserState.timeLeft <= 10) $("laser-time").style.color = "#D00000";
+    if(laserState.timeLeft <= 0) endLaser(false);
+  }, 1000);
+  laserState.raf = requestAnimationFrame(laserTick);
+}
+
+function spawnLaserItem(){
+  if(!laserState || laserState.done) return;
+  if(laserState.items.length >= LASER_MAX) return;
+  var active = laserState.items.map(function(it){ return it.i; });
+  var bag = laserState.pool.concat(laserState.pool.filter(function(i){ return FIND_ITEMS[i].hazard; }));
+  var avail = [], seen = {};
+  bag.forEach(function(i){
+    if(active.indexOf(i) < 0 && !seen[i]){ seen[i] = true; avail.push(i); }
+  });
+  if(!avail.length) return;
+
+  var i = avail[Math.floor(Math.random() * avail.length)];
+  var el = document.createElement("button");
+  el.className = "laser-item";
+  el.setAttribute("data-idx", i);
+  var ic = document.createElement("span");
+  ic.className = "li-icon"; ic.textContent = FIND_ITEMS[i].icon;
+  var nm = document.createElement("span");
+  nm.className = "li-name"; nm.textContent = FIND_ITEMS[i].name;
+  el.appendChild(ic); el.appendChild(nm);
+
+  var arena = $("laser-arena");
+  arena.appendChild(el);
+  var W = arena.clientWidth, H = arena.clientHeight;
+  var w = el.offsetWidth, h = el.offsetHeight;
+  var it = {
+    i:i, el:el, w:w, h:h, dead:false, life:null,
+    x: Math.random() * Math.max(1, W - w),
+    y: Math.random() * Math.max(1, H - h - 40) + 10,
+    vx: (Math.random() * 0.5 + 0.35) * (Math.random() < 0.5 ? -1 : 1),
+    vy: (Math.random() * 0.5 + 0.35) * (Math.random() < 0.5 ? -1 : 1)
+  };
+  el.style.transform = "translate(" + it.x + "px," + it.y + "px)";
+  el.onclick = function(){ laserHit(it); };
+  laserState.items.push(it);
+  it.life = setTimeout(function(){ removeLaserItem(it); }, LASER_LIFE);
+}
+
+function laserTick(){
+  if(!laserState || laserState.done) return;
+  var arena = $("laser-arena");
+  var W = arena.clientWidth, H = arena.clientHeight;
+  laserState.items.forEach(function(it){
+    it.x += it.vx; it.y += it.vy;
+    if(it.x < 0){ it.x = 0; it.vx *= -1; }
+    if(it.x > W - it.w){ it.x = W - it.w; it.vx *= -1; }
+    if(it.y < 0){ it.y = 0; it.vy *= -1; }
+    if(it.y > H - it.h - 34){ it.y = H - it.h - 34; it.vy *= -1; }
+    it.el.style.transform = "translate(" + it.x + "px," + it.y + "px)";
+  });
+  laserState.raf = requestAnimationFrame(laserTick);
+}
+
+function removeLaserItem(it){
+  if(it.dead) return;
+  it.dead = true;
+  if(it.life){ clearTimeout(it.life); it.life = null; }
+  var arr = laserState.items;
+  var p = arr.indexOf(it);
+  if(p >= 0) arr.splice(p, 1);
+  if(it.el && it.el.parentNode) it.el.parentNode.removeChild(it.el);
+}
+
+function fireLaser(tx, ty){
+  var arena = $("laser-arena");
+  var beam = $("laser-beam");
+  beam.setAttribute("x1", arena.clientWidth / 2);
+  beam.setAttribute("y1", arena.clientHeight - 34);
+  beam.setAttribute("x2", tx);
+  beam.setAttribute("y2", ty);
+  beam.style.opacity = 1;
+  var cannon = $("laser-cannon");
+  cannon.classList.add("fire");
+  setTimeout(function(){ cannon.classList.remove("fire"); }, 130);
+  clearTimeout(laserState.beamTimer);
+  laserState.beamTimer = setTimeout(function(){ beam.style.opacity = 0; }, 170);
+}
+
+function floatLabel(x, y, text, color){
+  var arena = $("laser-arena");
+  var d = document.createElement("div");
+  d.className = "laser-float";
+  d.textContent = text;
+  d.style.color = color;
+  d.style.left = x + "px";
+  d.style.top = y + "px";
+  arena.appendChild(d);
+  setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 880);
+}
+
+function laserHit(it){
+  if(!laserState || laserState.done || it.dead) return;
+  var item = FIND_ITEMS[it.i];
+  if(item.hazard && laserState.pool.indexOf(it.i) < 0) return; /* 已消灭过的隐患，再点无效 */
+
+  var arena = $("laser-arena");
+  var aRect = arena.getBoundingClientRect(), eRect = it.el.getBoundingClientRect();
+  var cx = eRect.left - aRect.left + eRect.width / 2;
+  var cy = eRect.top - aRect.top + eRect.height / 2;
+  fireLaser(cx, cy);
+  removeLaserItem(it);
+
+  if(item.hazard){
+    laserState.hits++;
+    laserState.combo++;
+    if(laserState.combo > laserState.best) laserState.best = laserState.combo;
+    laserState.score += 10;
+    var p = laserState.pool.indexOf(it.i);
+    if(p >= 0) laserState.pool.splice(p, 1);
+    floatLabel(cx, cy, "✓ +10", "#4CD6A4");
+    beep("ok");
+    if(laserState.hits >= FIND_HAZ_COUNT){
+      $("laser-score").textContent = laserState.score;
+      endLaser(true);
+      return;
+    }
+  }else{
+    laserState.misses++;
+    laserState.combo = 0;
+    laserState.score = Math.max(0, laserState.score - 5);
+    floatLabel(cx, cy, "✗ -5", "#FF8FA0");
+    beep("bad");
+  }
+  $("laser-score").textContent = laserState.score;
+  $("laser-combo").textContent = laserState.combo;
+}
+
+function stopLaser(){
+  if(!laserState) return;
+  laserState.done = true;
+  if(laserState.timer){ clearInterval(laserState.timer); laserState.timer = null; }
+  if(laserState.spawner){ clearInterval(laserState.spawner); laserState.spawner = null; }
+  if(laserState.raf){ cancelAnimationFrame(laserState.raf); laserState.raf = null; }
+  if(laserState.beamTimer){ clearTimeout(laserState.beamTimer); laserState.beamTimer = null; }
+  laserState.items.forEach(function(it){
+    if(it.life) clearTimeout(it.life);
+    if(it.el && it.el.parentNode) it.el.parentNode.removeChild(it.el);
+  });
+  laserState.items = [];
+  var beam = $("laser-beam");
+  if(beam) beam.style.opacity = 0;
+  var floats = document.querySelectorAll(".laser-float");
+  Array.prototype.forEach.call(floats, function(f){ if(f.parentNode) f.parentNode.removeChild(f); });
+}
+
+function endLaser(allDone){
+  if(!laserState || laserState.done) return;
+  stopLaser();
+
+  var hits = laserState.hits, misses = laserState.misses;
+  var title, comment;
+  if(allDone && misses === 0){
+    title = "激光卫士";
+    comment = "13 处隐患全部精准消灭，零误射！反应和眼力都是满分。";
+  }else if(allDone){
+    title = "神射手";
+    comment = "全部隐患消灭完毕！把误射的安全物品记一记，下次弹无虚发。";
+  }else if(hits >= 9){
+    title = "神射手";
+    comment = "时间到！消灭了 " + hits + " 处，剩下的对照清单再练练。";
+  }else{
+    title = "见习射手";
+    comment = "时间到！消灭了 " + hits + " 处，先认准下面这些隐患长什么样。";
+  }
+
+  var remaining = [];
+  FIND_ITEMS.forEach(function(it, i){
+    if(it.hazard && laserState.pool.indexOf(i) >= 0) remaining.push({it:it, i:i});
+  });
+  var list, listTitle;
+  if(remaining.length === 0){
+    listTitle = "宿舍隐患清单（附正确做法）";
+    list = FIND_ITEMS.filter(function(it){ return it.hazard; }).map(function(it){
+      return {t:"⚠ " + it.icon + " " + it.name, d:it.why + " 正确做法：" + it.fix, cls:"ra"};
+    });
+  }else{
+    listTitle = "漏网隐患清单（附正确做法）";
+    list = remaining.map(function(o){
+      return {t:"⚠ " + o.it.icon + " " + o.it.name, d:o.it.why + " 正确做法：" + o.it.fix, cls:"ra"};
+    });
+  }
+
+  fillResult({
+    game:"laser", score:laserState.score, max:FIND_HAZ_COUNT * 10, maxText:"满分 130",
+    title:title, comment:comment,
+    stats:[{v:hits + "/" + FIND_HAZ_COUNT, l:"消灭隐患"},{v:misses, l:"误射次数"},{v:laserState.best, l:"最高连击"}],
+    listTitle:listTitle, list:list, confetti:allDone && misses <= 2
+  });
+}
+
+$("btn-laser-back").onclick = function(){
+  stopLaser();
+  goHome();
+};
+
+var MATCH_ROWS = 6;
+var MATCH_COLS = 6;
+var MATCH_TYPES = [
+  {icon:"plug", name:"超载插座", fix:"插线板不超载，不把多个插线板串接使用。出现发热、焦味时，先远离并报告宿管或老师。"},
+  {icon:"fire", name:"遗留火源", fix:"宿舍不使用明火，蚊香、烟头等热源要远离床褥、窗帘和纸张。"},
+  {icon:"boxes", name:"堵塞出口", fix:"纸箱不堆在楼道和安全出口，发现堵塞及时清理或报告。"},
+  {icon:"wire", name:"破损电线", fix:"不触碰裸露线芯，停用损坏设备，请专业人员检修或更换。"},
+  {icon:"spray", name:"易燃喷雾", fix:"使用喷雾先远离明火和高温；按产品说明存放，避免暴晒。"},
+  {icon:"water", name:"湿滑地面", fix:"发现地面积水及时擦干，清理前提醒同学绕行，浴室使用防滑措施。"}
+];
+var matchState = null;
+
+function matchRandomKind(){
+  return Math.floor(Math.random() * MATCH_TYPES.length);
+}
+
+function matchFindMatches(board){
+  var found = {};
+  var r, c, start, len, i;
+  for(r = 0; r < MATCH_ROWS; r++){
+    c = 0;
+    while(c < MATCH_COLS){
+      start = c;
+      while(c + 1 < MATCH_COLS && board[r * MATCH_COLS + c + 1] === board[r * MATCH_COLS + start]) c++;
+      len = c - start + 1;
+      if(len >= 3){
+        for(i = start; i <= c; i++) found[r * MATCH_COLS + i] = true;
+      }
+      c++;
+    }
+  }
+  for(c = 0; c < MATCH_COLS; c++){
+    r = 0;
+    while(r < MATCH_ROWS){
+      start = r;
+      while(r + 1 < MATCH_ROWS && board[(r + 1) * MATCH_COLS + c] === board[start * MATCH_COLS + c]) r++;
+      len = r - start + 1;
+      if(len >= 3){
+        for(i = start; i <= r; i++) found[i * MATCH_COLS + c] = true;
+      }
+      r++;
+    }
+  }
+  return Object.keys(found).map(function(k){ return parseInt(k, 10); });
+}
+
+function matchMakeBoard(){
+  var board;
+  for(var attempt = 0; attempt < 100; attempt++){
+    board = [];
+    for(var i = 0; i < MATCH_ROWS * MATCH_COLS; i++){
+      var choices = [];
+      for(var kind = 0; kind < MATCH_TYPES.length; kind++){
+        if(i % MATCH_COLS >= 2 && board[i - 1] === kind && board[i - 2] === kind) continue;
+        if(i >= MATCH_COLS * 2 && board[i - MATCH_COLS] === kind && board[i - MATCH_COLS * 2] === kind) continue;
+        choices.push(kind);
+      }
+      board.push(choices[Math.floor(Math.random() * choices.length)]);
+    }
+    if(matchFindMove(board)) return board;
+  }
+  // A deterministic fallback also has no initial triples and a valid swap at 1/7.
+  board = Array.from({length:36}, function(_, i){ return (Math.floor(i / 6) + i % 6) % 6; });
+  board[2] = 0;
+  board[7] = 0;
+  return board;
+}
+
+function matchFindMove(board){
+  var copy = board.slice();
+  for(var i = 0; i < copy.length; i++){
+    var neighbors = [];
+    if(i % MATCH_COLS < MATCH_COLS - 1) neighbors.push(i + 1);
+    if(i + MATCH_COLS < copy.length) neighbors.push(i + MATCH_COLS);
+    for(var n = 0; n < neighbors.length; n++){
+      var j = neighbors[n], temp = copy[i];
+      copy[i] = copy[j]; copy[j] = temp;
+      var valid = matchFindMatches(copy).length > 0;
+      copy[j] = copy[i]; copy[i] = temp;
+      if(valid) return [i, j];
+    }
+  }
+  return null;
+}
+
+function matchReshuffle(automatic){
+  if(!matchState || matchState.done || matchState.busy) return;
+  if(!automatic && matchState.shuffles <= 0) return;
+  if(!automatic) matchState.shuffles--;
+  matchState.board = matchMakeBoard();
+  matchState.selected = null;
+  matchState.hint = null;
+  renderMatchBoard();
+  matchUpdateStats();
+  $("match-message").textContent = automatic ? "没有可消除的组合，已自动洗牌" : "换好了，继续找三连";
+}
+
+function matchAdjacent(a, b){
+  var ar = Math.floor(a / MATCH_COLS), ac = a % MATCH_COLS;
+  var br = Math.floor(b / MATCH_COLS), bc = b % MATCH_COLS;
+  return Math.abs(ar - br) + Math.abs(ac - bc) === 1;
+}
+
+function matchUpdateStats(){
+  if(!matchState) return;
+  $("match-score").textContent = matchState.score;
+  $("match-combo").textContent = matchState.combo;
+  $("match-cleared").textContent = matchState.cleared;
+  saveBest("match", matchState.score);
+  $("match-best").textContent = getBest("match");
+  $("btn-match-hint").disabled = matchState.busy || matchState.done;
+  $("btn-match-shuffle").disabled = matchState.busy || matchState.done || matchState.shuffles <= 0;
+  $("btn-match-shuffle").textContent = "重新洗牌 · " + matchState.shuffles;
+  $("btn-match-finish").disabled = matchState.busy || matchState.done;
+  $("match-board").setAttribute("aria-busy", String(matchState.busy));
+}
+
+function renderMatchBoard(){
+  var box = $("match-board");
+  box.innerHTML = "";
+  matchState.board.forEach(function(kind, i){
+    var b = document.createElement("button");
+    b.className = "match-cell" + (matchState.selected === i ? " selected" : "") +
+      (matchState.hint && matchState.hint.indexOf(i) >= 0 ? " hint" : "");
+    b.setAttribute("data-kind", kind);
+    b.setAttribute("aria-label", "第" + (Math.floor(i / MATCH_COLS) + 1) + "行第" + (i % MATCH_COLS + 1) + "列，" + MATCH_TYPES[kind].name);
+    b.setAttribute("aria-pressed", String(matchState.selected === i));
+    var tile = document.createElement("span");
+    tile.className = "match-tile";
+    tile.innerHTML = '<svg class="tile-drawing" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#ic-' + MATCH_TYPES[kind].icon + '"/></svg><span class="tile-label">' + MATCH_TYPES[kind].name + '</span>';
+    b.appendChild(tile);
+    var pointerStart = null;
+    b.onpointerdown = function(event){
+      pointerStart = {x:event.clientX, y:event.clientY};
+      b.setPointerCapture(event.pointerId);
+    };
+    b.onpointercancel = function(){ pointerStart = null; };
+    b.onpointerup = function(event){
+      if(!pointerStart || !matchState || matchState.done || matchState.busy) return;
+      var dx = event.clientX - pointerStart.x, dy = event.clientY - pointerStart.y;
+      pointerStart = null;
+      if(Math.max(Math.abs(dx), Math.abs(dy)) < 18) return;
+      matchState.ignoreClickUntil = performance.now() + 450;
+      var target = Math.abs(dx) > Math.abs(dy) ? i + (dx > 0 ? 1 : -1) : i + (dy > 0 ? MATCH_COLS : -MATCH_COLS);
+      if(target < 0 || target >= 36 || !matchAdjacent(i, target)) return;
+      matchState.selected = null;
+      matchSelect(i);
+      matchSelect(target);
+    };
+    b.onclick = function(){ if(performance.now() >= matchState.ignoreClickUntil) matchSelect(i); };
+    box.appendChild(b);
+  });
+}
+
+function matchSelect(i){
+  if(!matchState || matchState.done || matchState.busy) return;
+  matchState.hint = null;
+  beep("click");
+  if(matchState.selected === null){
+    matchState.selected = i;
+    $("match-message").textContent = "再点一个相邻图标交换";
+    renderMatchBoard();
+    return;
+  }
+  if(matchState.selected === i){
+    matchState.selected = null;
+    $("match-message").textContent = "选择一个图标开始";
+    renderMatchBoard();
+    return;
+  }
+  if(!matchAdjacent(matchState.selected, i)){
+    matchState.selected = i;
+    $("match-message").textContent = "要交换相邻的图标";
+    renderMatchBoard();
+    return;
+  }
+
+  var first = matchState.selected;
+  var t = matchState.board[first];
+  matchState.board[first] = matchState.board[i];
+  matchState.board[i] = t;
+  matchState.selected = null;
+  var matches = matchFindMatches(matchState.board);
+  if(!matches.length){
+    matchState.busy = true;
+    $("match-message").textContent = "没连成三个，位置还原";
+    beep("bad");
+    renderMatchBoard();
+    matchUpdateStats();
+    var invalidSession = matchState;
+    matchState.animationTimer = setTimeout(function(){
+      if(matchState !== invalidSession || matchState.done) return;
+      matchState.board[i] = matchState.board[first];
+      matchState.board[first] = t;
+      matchState.busy = false;
+      renderMatchBoard();
+      matchUpdateStats();
+    }, 210);
+    return;
+  }
+  matchState.moves++;
+  matchState.combo = 0;
+  $("match-message").textContent = "消除中……";
+  renderMatchBoard();
+  matchResolve(1);
+}
+
+function matchDropAndFill(matches){
+  var gone = {};
+  matches.forEach(function(i){ gone[i] = true; });
+  for(var c = 0; c < MATCH_COLS; c++){
+    var keep = [];
+    for(var r = MATCH_ROWS - 1; r >= 0; r--){
+      var idx = r * MATCH_COLS + c;
+      if(!gone[idx]) keep.push(matchState.board[idx]);
+    }
+    while(keep.length < MATCH_ROWS) keep.push(matchRandomKind());
+    for(r = MATCH_ROWS - 1; r >= 0; r--) matchState.board[r * MATCH_COLS + c] = keep[MATCH_ROWS - 1 - r];
+  }
+}
+
+function matchResolve(chain){
+  if(!matchState || matchState.done) return;
+  var matches = matchFindMatches(matchState.board);
+  if(!matches.length){
+    matchState.busy = false;
+    $("match-message").textContent = chain > 1 ? ("连消 " + (chain - 1) + " 次") : "选择一个图标开始";
+    renderMatchBoard();
+    matchUpdateStats();
+    if(!matchFindMove(matchState.board)) matchReshuffle(true);
+    return;
+  }
+  matchState.busy = true;
+  matchState.combo = chain;
+  matchState.bestCombo = Math.max(matchState.bestCombo, chain);
+  matchState.cleared += matches.length;
+  matchState.score += matches.length * 10 + (chain > 1 ? chain * 5 : 0);
+  var kind = matchState.board[matches[0]];
+  matches.forEach(function(i){ matchState.removed[matchState.board[i]]++; });
+  $("match-lesson").textContent = MATCH_TYPES[kind].name + "：" + MATCH_TYPES[kind].fix;
+  $("match-message").textContent = chain > 1 ? ("连消 " + chain + " 次！") : ("消除 " + matches.length + " 格");
+  matchUpdateStats();
+  var cells = $("match-board").querySelectorAll(".match-cell");
+  matches.forEach(function(i){ if(cells[i]) cells[i].classList.add("matched"); });
+  beep("ok");
+  var session = matchState;
+  matchState.animationTimer = setTimeout(function(){
+    if(matchState !== session || matchState.done) return;
+    matchDropAndFill(matches);
+    renderMatchBoard();
+    $("match-board").querySelectorAll(".match-cell").forEach(function(cell){ cell.classList.add("falling"); });
+    matchState.animationTimer = setTimeout(function(){
+      if(matchState === session && !matchState.done) matchResolve(chain + 1);
+    }, 180);
+  }, 230);
+}
+
+function startMatch(){
+  stopMatch();
+  matchState = {board:matchMakeBoard(), selected:null, score:0, cleared:0, moves:0,
+    combo:0, bestCombo:0, done:false, busy:false,
+    shuffles:3, hint:null, removed:[0,0,0,0,0,0], animationTimer:null, ignoreClickUntil:0};
+  show("screen-match");
+  matchUpdateStats();
+  $("match-message").textContent = "选择一个图标开始";
+  $("match-lesson").textContent = "棋子上的隐患来自校园日常。每次消除，这里会留下一条处理建议。";
+  renderMatchBoard();
+}
+
+function stopMatch(){
+  if(!matchState) return;
+  matchState.done = true;
+  clearTimeout(matchState.animationTimer);
+}
+
+function endMatch(){
+  if(!matchState || matchState.done || matchState.busy) return;
+  stopMatch();
+  var score = matchState.score;
+  fillResult({
+    game:"match", score:score, max:0, maxText:"本局累计得分",
+    title:"本局已结算", comment:"历史最高 " + getBest("match") + " 分。随时可以再开一局，继续累计得分。",
+    stats:[{v:matchState.cleared, l:"消除图标"},{v:matchState.moves, l:"有效交换"},{v:matchState.bestCombo, l:"最高连消"}],
+    listTitle:"离开游戏，这些隐患也要处理",
+    list:MATCH_TYPES.map(function(it, i){ return {t:it.name + " · 本局消除 " + matchState.removed[i] + " 个", d:it.fix, cls:"ra"}; }),
+    confetti:score > 0
+  });
+}
+
+$("btn-match-back").onclick = function(){
+  stopMatch();
+  goHome();
+};
+$("btn-match-hint").onclick = function(){
+  if(!matchState || matchState.done || matchState.busy) return;
+  var move = matchFindMove(matchState.board);
+  if(!move){ matchReshuffle(true); return; }
+  matchState.selected = null;
+  matchState.hint = move;
+  renderMatchBoard();
+  $("match-message").textContent = "交换虚线框里的两个棋子";
+};
+$("btn-match-shuffle").onclick = function(){ matchReshuffle(false); };
+$("btn-match-finish").onclick = endMatch;
+
+function fillResult(o){
+  lastGame = o.game;
+  saveBest(o.game, o.score);
+
+  $("final-score").textContent = o.score;
+  $("final-max").textContent = o.maxText || ("满分 " + o.max);
+  document.querySelector(".ring").classList.toggle("score-only", o.game === "match");
+  $("rank-title").textContent = o.title;
+  $("rank-comment").textContent = o.comment;
+
+  var ring = $("ring-fill");
+  ring.style.strokeDashoffset = RING_LEN;
+  setTimeout(function(){
+    var pct = o.max > 0 ? Math.max(0, Math.min(1, o.score / o.max)) : 0;
+    ring.style.strokeDashoffset = RING_LEN * (1 - pct);
+  }, 120);
+
+  var st = $("result-stats");
+  st.innerHTML = "";
+  (o.stats || []).forEach(function(s){
+    var d = document.createElement("div");
+    var b = document.createElement("b"); b.textContent = s.v;
+    var l = document.createElement("span"); l.textContent = s.l;
+    d.appendChild(b); d.appendChild(l);
+    st.appendChild(d);
+  });
+
+  var box = $("review-box");
+  box.innerHTML = "";
+  if(o.list && o.list.length){
+    if(o.listTitle){
+      var h = document.createElement("h3");
+      h.textContent = o.listTitle;
+      box.appendChild(h);
+    }
+    o.list.forEach(function(it){
+      var item = document.createElement("div");
+      item.className = "review-item";
+      var a = document.createElement("div");
+      a.className = it.cls || "ra";
+      a.textContent = it.t;
+      var b = document.createElement("div");
+      b.className = "rd";
+      b.textContent = it.d;
+      item.appendChild(a); item.appendChild(b);
+      box.appendChild(item);
+    });
+  }
+
+  if(o.confetti){ beep("fin"); confetti(); }
+  show("screen-result");
+}
+
+$("btn-home").onclick = goHome;
+$("btn-again").onclick = function(){
+  beep("click");
+  $("confetti").innerHTML = "";
+  startGame(lastGame);
+};
+$("btn-share").onclick = function(){
+  beep("click");
+  var text = "我在「青春护航 · 应急安全科普游戏合集」的《" + GAME_NAMES[lastGame] +
+             "》中拿下 " + $("final-score").textContent + " 分！你也来挑战一下～";
+  function done(){ toast("成绩已复制，粘贴即可分享"); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ toast(text); });
+  }else{
+    toast(text);
+  }
+};
+
+function confetti(){
+  var box = $("confetti");
+  box.innerHTML = "";
+  var colors = ["#E5383B","#F77F00","#FCBF49","#2A9D8F","#8338EC"];
+  for(var i=0;i<40;i++){
+    var d = document.createElement("i");
+    d.style.left = (Math.random() * 100) + "%";
+    d.style.background = colors[i % colors.length];
+    d.style.animationDelay = (Math.random() * .6) + "s";
+    box.appendChild(d);
+  }
+  setTimeout(function(){ box.innerHTML = ""; }, 2600);
+}
+
+renderHome();
+</script>
+</body>
+</html>
+
